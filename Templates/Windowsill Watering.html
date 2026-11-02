@@ -1,0 +1,701 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Windowsill Watering</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: a summary panel above a grid of planter cards. Each card pairs an illustrated planter on a sill with its watering settings. */
+:root {
+  --bg: #eceee7;
+  --surface: #f7f8f3;
+  --field: #ffffff;
+  --scene: #dde6da;
+  --sill: #b4c1b0;
+  --fg: #1d2822;
+  --muted: #5a685f;
+  --line: #cdd5c9;
+  --accent: #1f6f9c;
+  --accent-fg: #ffffff;
+  --ok-bg: #d9eadc; --ok-fg: #1f5c38;
+  --warn-bg: #f5e4c0; --warn-fg: #7a4f00;
+  --bad-bg: #f6d8d0; --bad-fg: #8f2a14;
+  --neutral-bg: #e3e7df; --neutral-fg: #3f4c44;
+  --leaf: #3f7a4a; --leaf-2: #7fb069; --leaf-3: #2b5a37; --stem: #4a7a45;
+  --bloom: #ec7fa0; --bloom-2: #f2c14e;
+  --soil: #4a3426; --soil-wet: #2c1e15;
+  --font-display: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131815; --surface: #1c231f; --field: #131815; --scene: #27322c; --sill: #3b4a41;
+    --fg: #e6ece6; --muted: #9aa89f; --line: #33403a;
+    --accent: #62b4e3; --accent-fg: #08202e;
+    --ok-bg: #24402e; --ok-fg: #9fd7b0;
+    --warn-bg: #4a3a14; --warn-fg: #f0c970;
+    --bad-bg: #4d231b; --bad-fg: #f4aa98;
+    --neutral-bg: #2f3a34; --neutral-fg: #c3cfc6;
+    --leaf: #5fa36b; --leaf-2: #98c97f; --leaf-3: #3f7a4a; --stem: #6aa35f;
+    --bloom: #f59ab5; --bloom-2: #f2c14e;
+    --soil: #3a2a1f; --soil-wet: #21170f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131815; --surface: #1c231f; --field: #131815; --scene: #27322c; --sill: #3b4a41;
+  --fg: #e6ece6; --muted: #9aa89f; --line: #33403a;
+  --accent: #62b4e3; --accent-fg: #08202e;
+  --ok-bg: #24402e; --ok-fg: #9fd7b0;
+  --warn-bg: #4a3a14; --warn-fg: #f0c970;
+  --bad-bg: #4d231b; --bad-fg: #f4aa98;
+  --neutral-bg: #2f3a34; --neutral-fg: #c3cfc6;
+  --leaf: #5fa36b; --leaf-2: #98c97f; --leaf-3: #3f7a4a; --stem: #6aa35f;
+  --bloom: #f59ab5; --bloom-2: #f2c14e;
+  --soil: #3a2a1f; --soil-wet: #21170f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.eyebrow { margin: 0; font: 500 12px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 8px 0 0; font: 700 clamp(28px, 5vw, 40px)/1.05 var(--font-display); letter-spacing: -.02em; text-wrap: balance; }
+
+.primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 40px; padding: 0 16px; border: 0; border-radius: 10px;
+  background: var(--accent); color: var(--accent-fg); font: 600 14px var(--font-body); cursor: pointer;
+}
+.primary:hover { filter: brightness(1.08); }
+.ghost {
+  min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px;
+  background: transparent; color: var(--muted); font: 500 14px var(--font-body); cursor: pointer;
+}
+.ghost:hover { color: var(--fg); border-color: var(--muted); }
+.linkbtn { border: 0; background: none; padding: 0; color: var(--accent); font: 600 12.5px var(--font-body); text-decoration: underline; cursor: pointer; }
+
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; display: grid; gap: 14px; }
+.summary-main { display: flex; gap: 12px 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.sum-msg { min-width: 0; }
+.sum-msg strong { display: block; font: 700 18px/1.25 var(--font-display); }
+.sum-msg span { color: var(--muted); overflow-wrap: anywhere; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 36px; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.stats div { min-width: 0; }
+.stats dt { font: 500 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stats dd { margin: 6px 0 0; font: 500 16px/1.2 var(--font-mono); font-variant-numeric: tabular-nums; }
+.note { margin: 0; font-size: 13.5px; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+
+.scene { position: relative; background: var(--scene); overflow: hidden; padding-top: 14px; }
+.scene svg { display: block; margin: 0 auto; width: 100%; max-width: 250px; height: auto; overflow: visible; }
+.pill { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; font: 500 12px/1.2 var(--font-mono); }
+.pill-ok { background: var(--ok-bg); color: var(--ok-fg); }
+.pill-warn { background: var(--warn-bg); color: var(--warn-fg); }
+.pill-bad { background: var(--bad-bg); color: var(--bad-fg); }
+.pill-neutral { background: var(--neutral-bg); color: var(--neutral-fg); }
+.nav {
+  position: absolute; top: 50%; z-index: 2; width: 34px; height: 34px; margin-top: -17px;
+  display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--surface); color: var(--fg); cursor: pointer; opacity: .92;
+}
+.nav:hover { border-color: var(--accent); color: var(--accent); }
+.nav.prev { left: 10px; }
+.nav.next { right: 10px; }
+
+.sill { fill: var(--sill); }
+.shadow { fill: var(--fg); opacity: .12; }
+.soil { fill: var(--soil); transition: fill .4s; }
+.scene.wet .soil { fill: var(--soil-wet); }
+.l1 { fill: var(--leaf); }
+.l2 { fill: var(--leaf-2); }
+.l3 { fill: var(--leaf-3); }
+.b1 { fill: var(--bloom); }
+.b2 { fill: var(--bloom-2); }
+.st { fill: none; stroke: var(--stem); stroke-width: 4; stroke-linecap: round; }
+.st.thin { stroke-width: 2.2; }
+.st2 { fill: none; stroke: var(--leaf-3); stroke-width: 1.6; opacity: .7; }
+.slit { fill: none; stroke: var(--scene); stroke-width: 3.5; stroke-linecap: round; }
+.arm { fill: none; stroke: var(--leaf); stroke-width: 20; stroke-linecap: round; stroke-linejoin: round; }
+.rib { fill: none; stroke: var(--leaf-3); stroke-width: 1.6; opacity: .55; }
+.drop { fill: var(--accent); opacity: 0; }
+.sway { transform-origin: 0 0; transition: transform .6s, filter .6s; animation: sway 7s ease-in-out infinite; }
+@keyframes sway { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
+.s-overdue .sway { animation: none; transform: rotate(5deg) scaleY(.95); filter: saturate(.5); }
+.scene.pouring .drop { animation: fall .95s cubic-bezier(.5, 0, .9, .6) both; animation-delay: calc(var(--i) * .14s); }
+@keyframes fall {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(var(--fall)); opacity: 0; }
+}
+
+.gauge { padding: 14px 16px 0; display: grid; gap: 7px; }
+.gauge-bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.gauge-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .4s; }
+.s-overdue .gauge-fill { background: var(--bad-fg); }
+.gauge-meta { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font: 400 12px var(--font-mono); color: var(--muted); }
+
+.body { padding: 14px 16px 16px; display: grid; gap: 14px; }
+.name {
+  width: 100%; padding: 2px 0; border: 0; border-bottom: 1px dashed transparent; border-radius: 0;
+  background: transparent; color: var(--fg); font: 700 21px/1.2 var(--font-display); letter-spacing: -.01em;
+}
+.name:hover, .name:focus { border-bottom-color: var(--line); }
+.name:focus-visible { outline: none; border-bottom: 1px solid var(--accent); }
+.field { display: grid; gap: 6px; }
+.field > label, .line > label, .line > .lbl { font: 500 13px var(--font-body); color: var(--muted); }
+select, .datefield {
+  width: 100%; min-height: 40px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--field); color: var(--fg); font: 500 15px var(--font-body);
+}
+.line { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.line > label, .line > .lbl { flex: 1 1 auto; }
+.stepper { display: flex; align-items: center; width: 156px; flex: none; border: 1px solid var(--line); border-radius: 10px; background: var(--field); overflow: hidden; }
+.stepper button { width: 36px; height: 38px; flex: none; border: 0; background: transparent; color: var(--fg); font-size: 18px; cursor: pointer; }
+.stepper button:hover { background: var(--neutral-bg); }
+.stepper input {
+  flex: 1 1 auto; min-width: 0; width: 100%; height: 38px; padding: 0; border: 0; background: transparent;
+  color: var(--fg); text-align: right; font: 500 15px var(--font-mono); font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield; appearance: textfield;
+}
+.stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.stepper input:focus-visible { outline: none; }
+.stepper:focus-within { border-color: var(--accent); }
+.unit { flex: none; width: 38px; padding-left: 4px; font: 400 12px var(--font-mono); color: var(--muted); }
+.line .datefield { width: 156px; flex: none; }
+.swatches { display: flex; gap: 8px; }
+.sw { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); background: var(--c); box-shadow: 0 0 0 1px var(--line); cursor: pointer; padding: 0; }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--accent); }
+.hint { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 12.5px; color: var(--muted); }
+.actions { display: flex; gap: 8px; }
+.actions .primary { flex: 1 1 auto; }
+
+.add-card {
+  min-height: 220px; display: grid; place-items: center; align-content: center; gap: 8px;
+  border: 2px dashed var(--line); border-radius: 16px; background: transparent; color: var(--muted);
+  font: 600 15px var(--font-body); cursor: pointer;
+}
+.add-card:hover { color: var(--accent); border-color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sway, .scene.pouring .drop { animation: none; }
+  .sway, .soil, .gauge-fill { transition: none; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow" id="today"></p>
+      <h1>Windowsill Watering</h1>
+    </div>
+    <button class="primary" id="add" type="button">Add planter</button>
+  </header>
+
+  <section class="summary" aria-live="polite">
+    <div class="summary-main">
+      <div class="sum-msg" id="sum-msg"></div>
+      <button class="primary" id="water-all" type="button" hidden>Water all due</button>
+    </div>
+    <dl class="stats">
+      <div><dt>Planters</dt><dd id="st-count">0</dd></div>
+      <div><dt>Water per week</dt><dd id="st-week">0 ml</dd></div>
+      <div><dt>Next watering</dt><dd id="st-next">None</dd></div>
+    </dl>
+  </section>
+
+  <p class="note" id="note" hidden>These three planters are samples. Change the plant, the amount or the schedule, or remove them.</p>
+
+  <main class="grid" id="grid"></main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var KEY = 'windowsill-watering-v1';
+  var DAY = 86400000;
+  var ML_MIN = 10, ML_MAX = 5000, EVERY_MIN = 1, EVERY_MAX = 90;
+
+  /* ---------- dates ---------- */
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function fmt(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function parse(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+  function today() { return fmt(new Date()); }
+  function diff(a, b) { return Math.round((parse(b) - parse(a)) / DAY); }
+  function addDays(s, n) { var d = parse(s); d.setDate(d.getDate() + n); return fmt(d); }
+  function nice(s) { return parse(s).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+
+  /* ---------- plant art (drawn from the soil line at 0,0, growing upward) ---------- */
+  function blade(x, h, w, t, c) {
+    return '<path class="' + c + '" d="M' + (x - w) + ',2 Q' + (x - w + t * 0.15) + ',' + (-h * 0.55) + ' ' + (x + t) + ',' + (-h) +
+      ' Q' + (x + w + t * 0.35) + ',' + (-h * 0.5) + ' ' + (x + w) + ',2Z"/>';
+  }
+  function drawSnake() {
+    var b = [[-34, 78, 9, -26], [36, 70, 8, 26], [-20, 112, 10, -12], [23, 100, 10, 18], [9, 126, 10, 8], [-6, 138, 11, -3]];
+    return b.map(function (a) {
+      return blade(a[0], a[1], a[2], a[3], 'l1') + blade(a[0] + a[3] * 0.05, a[1] * 0.82, a[2] * 0.3, a[3] * 0.85, 'l2');
+    }).join('');
+  }
+  function monsteraLeaf(x, y, rot, s) {
+    return '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ') scale(' + s + ')">' +
+      '<path class="l1" d="M0,0 C-34,-8 -40,-46 -10,-60 C-6,-62 -2,-58 0,-52 C2,-58 6,-62 10,-60 C40,-46 34,-8 0,0Z"/>' +
+      '<path class="st2" d="M0,0 V-50"/>' +
+      '<path class="slit" d="M-22,-24 L-4,-28 M-26,-42 L-6,-40 M22,-24 L4,-28 M26,-42 L6,-40"/></g>';
+  }
+  function drawMonstera() {
+    return '<path class="st" d="M0,2 C-8,-20 -22,-40 -38,-64"/><path class="st" d="M0,2 C6,-30 24,-50 36,-76"/><path class="st" d="M0,2 C-2,-40 -2,-64 0,-92"/>' +
+      monsteraLeaf(-38, -64, -28, 0.85) + monsteraLeaf(36, -76, 24, 0.95) + monsteraLeaf(0, -92, 0, 1);
+  }
+  function frond(x2, y2, cx, cy, n, len) {
+    var s = '<path class="st thin" d="M0,2 Q' + cx + ',' + cy + ' ' + x2 + ',' + y2 + '"/>';
+    for (var i = 1; i <= n; i++) {
+      var t = i / (n + 1);
+      var x = 2 * (1 - t) * t * cx + t * t * x2;
+      var y = 2 * (1 - t) * t * cy + t * t * y2;
+      var tx = 2 * (1 - t) * cx + 2 * t * (x2 - cx);
+      var ty = 2 * (1 - t) * cy + 2 * t * (y2 - cy);
+      var a = Math.atan2(ty, tx) * 180 / Math.PI;
+      var r = len * (1 - t * 0.65);
+      var base = 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') rotate(';
+      var tail = ') translate(' + (r * 0.85).toFixed(1) + ' 0)';
+      var c = i % 2 ? 'l1' : 'l2';
+      s += '<ellipse class="' + c + '" rx="' + r.toFixed(1) + '" ry="' + (r * 0.28).toFixed(1) + '" transform="' + base + (a + 58).toFixed(1) + tail + '"/>';
+      s += '<ellipse class="' + c + '" rx="' + r.toFixed(1) + '" ry="' + (r * 0.28).toFixed(1) + '" transform="' + base + (a - 58).toFixed(1) + tail + '"/>';
+    }
+    return s;
+  }
+  function drawFern() {
+    return frond(-80, -50, -55, -118, 10, 17) + frond(82, -48, 58, -118, 10, 17) +
+      frond(-44, -100, -48, -138, 10, 16) + frond(46, -104, 50, -138, 10, 16) +
+      frond(0, -122, -4, -150, 10, 15) + frond(-26, -66, -34, -96, 7, 12) + frond(28, -68, 34, -98, 7, 12);
+  }
+  function drawCactus() {
+    var petals = '';
+    for (var i = 0; i < 6; i++) petals += '<ellipse class="b1" rx="5" ry="11" transform="rotate(' + (i * 60) + ') translate(0 -9)"/>';
+    return '<path class="arm" d="M-18,-46 H-40 V-84"/><path class="arm" d="M18,-64 H40 V-92"/>' +
+      '<rect class="l1" x="-24" y="-118" width="48" height="122" rx="24"/>' +
+      '<path class="rib" d="M-9,-104 V-6 M9,-104 V-6 M0,-110 V-4"/>' +
+      '<g transform="translate(0 -122)">' + petals + '<circle class="b2" r="4.5"/></g>';
+  }
+  function rosette(x, y, s) {
+    function ring(angles, dy, off, rx, ry, c) {
+      return angles.map(function (a) {
+        return '<ellipse class="' + c + '" rx="' + rx + '" ry="' + ry + '" transform="translate(0 ' + dy + ') rotate(' + a + ') translate(0 ' + (-off) + ')"/>';
+      }).join('');
+    }
+    var g = ring([-80, -52, -26, 0, 26, 52, 80], -14, 20, 11, 22, 'l3') +
+      ring([-66, -38, -12, 14, 40, 66], -18, 15, 10, 18, 'l1') +
+      ring([-48, -16, 16, 48], -22, 10, 8, 13, 'l2') +
+      ring([-20, 20], -24, 5, 6, 9, 'l1');
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">' + g + '</g>';
+  }
+  function drawSucculent() { return rosette(-36, 0, 0.6) + rosette(36, 0, 0.55) + rosette(0, 0, 1.15); }
+  function drawBasil() {
+    var stems = [[-34, 76], [32, 88], [-12, 104], [10, 118], [-2, 60]], s = '';
+    stems.forEach(function (st) {
+      var x = st[0], h = st[1];
+      s += '<path class="st" d="M0,2 L' + x + ',' + (-h) + '"/>';
+      for (var y = 30; y < h - 6; y += 22) {
+        var sx = x * (y / h);
+        s += '<ellipse class="l1" cx="' + (sx - 11) + '" cy="' + (-y) + '" rx="13" ry="8" transform="rotate(-28 ' + (sx - 11) + ' ' + (-y) + ')"/>' +
+          '<ellipse class="l2" cx="' + (sx + 11) + '" cy="' + (-y - 4) + '" rx="13" ry="8" transform="rotate(28 ' + (sx + 11) + ' ' + (-y - 4) + ')"/>';
+      }
+      s += '<ellipse class="l2" cx="' + (x - 6) + '" cy="' + (-h - 4) + '" rx="9" ry="6" transform="rotate(-40 ' + (x - 6) + ' ' + (-h - 4) + ')"/>' +
+        '<ellipse class="l1" cx="' + (x + 6) + '" cy="' + (-h - 4) + '" rx="9" ry="6" transform="rotate(40 ' + (x + 6) + ' ' + (-h - 4) + ')"/>';
+    });
+    return s;
+  }
+  function drawDaisy() {
+    var fl = [[-38, 88, 0.9], [6, 122, 1.05], [42, 80, 0.85]];
+    var s = '<ellipse class="l1" cx="-18" cy="-24" rx="16" ry="6" transform="rotate(-25 -18 -24)"/><ellipse class="l2" cx="20" cy="-30" rx="16" ry="6" transform="rotate(25 20 -30)"/>';
+    fl.forEach(function (f) {
+      var x = f[0], h = f[1], sc = f[2], p = '';
+      s += '<path class="st" d="M0,2 Q' + (x * 0.2) + ',' + (-h * 0.5) + ' ' + x + ',' + (-h) + '"/>';
+      for (var i = 0; i < 10; i++) p += '<ellipse class="b1" rx="6" ry="12" transform="rotate(' + (i * 36) + ') translate(0 -13)"/>';
+      s += '<g transform="translate(' + x + ' ' + (-h) + ') scale(' + sc + ')">' + p + '<circle class="b2" r="8"/></g>';
+    });
+    return s;
+  }
+
+  var PLANTS = [
+    { id: 'snake', name: 'Snake plant', ml: 200, every: 14, draw: drawSnake },
+    { id: 'monstera', name: 'Monstera', ml: 400, every: 7, draw: drawMonstera },
+    { id: 'fern', name: 'Boston fern', ml: 300, every: 3, draw: drawFern },
+    { id: 'cactus', name: 'Cactus', ml: 100, every: 21, draw: drawCactus },
+    { id: 'succulent', name: 'Succulent', ml: 80, every: 14, draw: drawSucculent },
+    { id: 'basil', name: 'Basil', ml: 250, every: 2, draw: drawBasil },
+    { id: 'daisy', name: 'Daisy', ml: 300, every: 3, draw: drawDaisy }
+  ];
+  var POTS = [
+    { id: 'terracotta', name: 'Terracotta', shape: 'taper', hi: '#e08e69', body: '#c8683f', lo: '#a5502e', rim: '#e3996f' },
+    { id: 'slate', name: 'Slate', shape: 'cyl', hi: '#788593', body: '#5b6773', lo: '#434d57', rim: '#7d8a98' },
+    { id: 'cream', name: 'Cream', shape: 'bowl', hi: '#f7f0e0', body: '#e5dac3', lo: '#c9bda3', rim: '#faf5e8' },
+    { id: 'mustard', name: 'Mustard', shape: 'cyl', hi: '#ecbf5a', body: '#d8a42f', lo: '#b5841c', rim: '#efc766' }
+  ];
+
+  function plantOf(p) { return PLANTS.filter(function (x) { return x.id === p.plant; })[0] || PLANTS[0]; }
+  function potOf(p) { return POTS.filter(function (x) { return x.id === p.pot; })[0] || POTS[0]; }
+
+  function potGeometry(pot, fill) {
+    if (pot.shape === 'taper') {
+      return { top: 164, rim: 60, rry: 9, soil: 52,
+        svg: '<rect x="60" y="164" width="120" height="22" fill="' + fill + '"/><path d="M68,186 H172 L160,238 Q159,242 154,242 H86 Q81,242 80,238Z" fill="' + fill + '"/>' };
+    }
+    if (pot.shape === 'cyl') {
+      return { top: 160, rim: 50, rry: 8, soil: 43,
+        svg: '<path d="M70,160 H170 V232 Q170,242 160,242 H80 Q70,242 70,232Z" fill="' + fill + '"/><rect x="70" y="176" width="100" height="3" fill="#000" opacity=".12"/>' };
+    }
+    return { top: 186, rim: 64, rry: 9, soil: 57,
+      svg: '<path d="M56,186 H184 C184,226 168,242 140,242 H100 C72,242 56,226 56,186Z" fill="' + fill + '"/>' };
+  }
+
+  function sceneSVG(p) {
+    var pot = potOf(p), plant = plantOf(p), gid = 'pg-' + p.id;
+    var geo = potGeometry(pot, 'url(#' + gid + ')');
+    var drops = '';
+    [96, 110, 124, 138, 118].forEach(function (x, i) {
+      drops += '<g transform="translate(' + x + ' 28)"><path class="drop" style="--i:' + i + '" d="M0,-7 C4,-1 5,2 5,4 A5,5 0 1 1 -5,4 C-5,2 -4,-1 0,-7Z"/></g>';
+    });
+    return '<svg viewBox="0 0 240 250" role="img" aria-label="' + esc(plant.name) + ' in a ' + pot.name.toLowerCase() + ' planter" style="--fall:' + (geo.top - 30) + 'px">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="' + pot.hi + '"/><stop offset=".5" stop-color="' + pot.body + '"/><stop offset="1" stop-color="' + pot.lo + '"/></linearGradient></defs>' +
+      '<rect class="sill" x="-600" y="243" width="1440" height="7"/>' +
+      '<ellipse class="shadow" cx="120" cy="243" rx="' + (geo.soil + 14) + '" ry="4"/>' +
+      geo.svg +
+      '<ellipse cx="120" cy="' + geo.top + '" rx="' + geo.rim + '" ry="' + geo.rry + '" fill="' + pot.rim + '"/>' +
+      '<ellipse class="soil" cx="120" cy="' + (geo.top + 1) + '" rx="' + geo.soil + '" ry="' + (geo.rry - 2.5) + '"/>' +
+      '<g transform="translate(120 ' + (geo.top + 1) + ')"><g class="sway">' + plant.draw() + '</g></g>' +
+      drops + '</svg>';
+  }
+
+  /* ---------- state ---------- */
+  function uid() { return 'p' + Math.random().toString(36).slice(2, 8); }
+  function seed() {
+    var t = today();
+    return { sample: true, planters: [
+      { id: uid(), name: 'Kitchen basil', plant: 'basil', pot: 'terracotta', ml: 250, every: 2, last: addDays(t, -3) },
+      { id: uid(), name: 'Living room monstera', plant: 'monstera', pot: 'slate', ml: 400, every: 7, last: addDays(t, -4) },
+      { id: uid(), name: 'Desk succulent', plant: 'succulent', pot: 'cream', ml: 80, every: 14, last: addDays(t, -14) }
+    ] };
+  }
+  function clampInt(v, lo, hi, dflt) {
+    v = parseInt(v, 10);
+    if (!isFinite(v)) return dflt;
+    return Math.max(lo, Math.min(hi, v));
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (s && Array.isArray(s.planters)) {
+          s.planters = s.planters.map(function (p) {
+            var pl = plantOf(p);
+            return {
+              id: p.id || uid(), name: String(p.name || 'Planter'), plant: pl.id, pot: potOf(p).id,
+              ml: clampInt(p.ml, ML_MIN, ML_MAX, pl.ml), every: clampInt(p.every, EVERY_MIN, EVERY_MAX, pl.every),
+              last: parse(p.last) ? p.last : today()
+            };
+          });
+          s.sample = false;
+          return s;
+        }
+      }
+    } catch (e) { /* storage unavailable */ }
+    return seed();
+  }
+  var state = load();
+  function touch() {
+    state.sample = false;
+    document.getElementById('note').hidden = true;
+    try { localStorage.setItem(KEY, JSON.stringify({ planters: state.planters })); } catch (e) { /* ignore */ }
+  }
+  function get(id) { return state.planters.filter(function (p) { return p.id === id; })[0]; }
+
+  /* ---------- derived values ---------- */
+  function info(p) {
+    var t = today();
+    var last = parse(p.last) ? p.last : t;
+    var since = Math.max(0, diff(last, t));
+    var left = p.every - since;
+    var next = addDays(last, p.every);
+    var cls = 'ok', pill, pillCls = 'ok';
+    if (left < 0) { cls = 'overdue'; pill = plural(-left, 'day') + ' overdue'; pillCls = 'bad'; }
+    else if (left === 0) { cls = 'today'; pill = 'Water today'; pillCls = 'warn'; }
+    else if (left === 1) { cls = 'soon'; pill = 'Tomorrow'; pillCls = 'neutral'; }
+    else { pill = 'In ' + left + ' days'; }
+    return { since: since, left: left, next: next, cls: cls, pill: pill, pillCls: pillCls };
+  }
+
+  /* ---------- rendering ---------- */
+  var grid = document.getElementById('grid');
+  function q(el, role) { return el.querySelector('[data-role="' + role + '"]'); }
+  function fld(el, name) { return el.querySelector('[data-field="' + name + '"]'); }
+  function cardEl(id) { return grid.querySelector('[data-id="' + id + '"]'); }
+
+  var CHEV_L = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var CHEV_R = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var DROP = '<svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M7 1C9.5 4.5 12 7 12 10a5 5 0 0 1-10 0c0-3 2.5-5.5 5-9Z" fill="currentColor"/></svg>';
+
+  function cardHTML(p) {
+    var id = p.id;
+    var options = PLANTS.map(function (x) {
+      return '<option value="' + x.id + '"' + (x.id === p.plant ? ' selected' : '') + '>' + x.name + '</option>';
+    }).join('');
+    var swatches = POTS.map(function (x) {
+      return '<button type="button" class="sw" data-act="pot" data-pot="' + x.id + '" aria-pressed="' + (x.id === p.pot) +
+        '" aria-label="' + x.name + ' planter" title="' + x.name + '" style="--c:' + x.body + '"></button>';
+    }).join('');
+    return '<article class="card" data-id="' + id + '">' +
+      '<div class="scene" data-role="scene">' +
+        '<span class="pill" data-role="pill"></span>' +
+        '<button type="button" class="nav prev" data-act="prev" aria-label="Previous plant">' + CHEV_L + '</button>' +
+        '<button type="button" class="nav next" data-act="next" aria-label="Next plant">' + CHEV_R + '</button>' +
+        '<div data-role="art"></div>' +
+      '</div>' +
+      '<div class="gauge"><div class="gauge-bar" role="img" data-role="gauge"><div class="gauge-fill" data-role="fill"></div></div>' +
+        '<div class="gauge-meta"><span data-role="since"></span><span data-role="next"></span></div></div>' +
+      '<div class="body">' +
+        '<input class="name" id="name-' + id + '" data-field="name" type="text" maxlength="40" value="' + esc(p.name) + '" aria-label="Planter name">' +
+        '<div class="field"><label for="plant-' + id + '">Plant</label>' +
+          '<select id="plant-' + id + '" data-field="plant">' + options + '</select></div>' +
+        '<div class="line"><span class="lbl" id="potl-' + id + '">Planter</span><div class="swatches" role="group" aria-labelledby="potl-' + id + '">' + swatches + '</div></div>' +
+        '<div class="line"><label for="ml-' + id + '">Water each time</label>' +
+          '<div class="stepper"><button type="button" data-act="ml-dec" aria-label="Less water">−</button>' +
+          '<input id="ml-' + id + '" data-field="ml" type="number" inputmode="numeric" min="' + ML_MIN + '" max="' + ML_MAX + '" step="5" value="' + p.ml + '">' +
+          '<span class="unit">ml</span><button type="button" data-act="ml-inc" aria-label="More water">+</button></div></div>' +
+        '<div class="line"><label for="every-' + id + '">Water every</label>' +
+          '<div class="stepper"><button type="button" data-act="ev-dec" aria-label="Fewer days between watering">−</button>' +
+          '<input id="every-' + id + '" data-field="every" type="number" inputmode="numeric" min="' + EVERY_MIN + '" max="' + EVERY_MAX + '" step="1" value="' + p.every + '">' +
+          '<span class="unit">days</span><button type="button" data-act="ev-inc" aria-label="More days between watering">+</button></div></div>' +
+        '<div class="line"><label for="last-' + id + '">Last watered</label>' +
+          '<input class="datefield" id="last-' + id + '" data-field="last" type="date" max="' + today() + '" value="' + p.last + '"></div>' +
+        '<p class="hint"><span data-role="hint"></span><button type="button" class="linkbtn" data-act="reset" data-role="reset" hidden>Use typical</button></p>' +
+        '<div class="actions"><button type="button" class="primary" data-act="water">' + DROP + 'Water now</button>' +
+          '<button type="button" class="ghost" data-act="remove" data-role="remove">Remove</button></div>' +
+      '</div></article>';
+  }
+
+  function drawScene(el, p) { q(el, 'art').innerHTML = sceneSVG(p); }
+
+  function refreshCard(el, p) {
+    var i = info(p);
+    el.className = 'card s-' + i.cls;
+    var pill = q(el, 'pill');
+    pill.textContent = i.pill;
+    pill.className = 'pill pill-' + i.pillCls;
+    var frac = Math.max(0, Math.min(1, 1 - i.since / p.every));
+    q(el, 'fill').style.width = (frac * 100).toFixed(0) + '%';
+    q(el, 'gauge').setAttribute('aria-label', Math.round(frac * 100) + ' percent of the watering interval left');
+    q(el, 'since').textContent = i.since === 0 ? 'Watered today' : 'Watered ' + plural(i.since, 'day') + ' ago';
+    q(el, 'next').textContent = (i.left < 0 ? 'Was due ' : 'Next ') + nice(i.next);
+    var pl = plantOf(p);
+    q(el, 'hint').textContent = 'Typical for ' + pl.name + ': ' + pl.ml + ' ml every ' + plural(pl.every, 'day');
+    q(el, 'reset').hidden = (p.ml === pl.ml && p.every === pl.every);
+  }
+
+  function litres(ml) { return ml >= 1000 ? (ml / 1000).toFixed(1) + ' L' : Math.round(ml) + ' ml'; }
+
+  function refreshSummary() {
+    var list = state.planters;
+    var infos = list.map(function (p) { return { p: p, i: info(p) }; });
+    var due = infos.filter(function (x) { return x.i.left <= 0; });
+    var msg = document.getElementById('sum-msg');
+    if (!list.length) {
+      msg.innerHTML = '<strong>No planters yet</strong><span>Add a planter to start a watering schedule.</span>';
+    } else if (due.length) {
+      msg.innerHTML = '<strong>' + (due.length === 1 ? '1 planter needs water' : due.length + ' planters need water') + '</strong><span>' +
+        due.map(function (x) { return esc(x.p.name); }).join(', ') + '</span>';
+    } else {
+      var soonest = infos.slice().sort(function (a, b) { return a.i.left - b.i.left; })[0];
+      msg.innerHTML = '<strong>Nothing due today</strong><span>Next up: ' + esc(soonest.p.name) + ', ' + nice(soonest.i.next) + '</span>';
+    }
+    document.getElementById('water-all').hidden = !due.length;
+    document.getElementById('st-count').textContent = String(list.length);
+    var week = list.reduce(function (sum, p) { return sum + p.ml * 7 / p.every; }, 0);
+    document.getElementById('st-week').textContent = litres(week);
+    var nxt = 'None';
+    if (list.length) {
+      nxt = due.length ? 'Today' : nice(infos.slice().sort(function (a, b) { return a.i.left - b.i.left; })[0].i.next);
+    }
+    document.getElementById('st-next').textContent = nxt;
+  }
+
+  function render() {
+    grid.innerHTML = state.planters.map(cardHTML).join('') +
+      '<button type="button" class="add-card" data-act="add"><span aria-hidden="true" style="font-size:28px;line-height:1">+</span>Add planter</button>';
+    state.planters.forEach(function (p) {
+      var el = cardEl(p.id);
+      drawScene(el, p);
+      refreshCard(el, p);
+    });
+    refreshSummary();
+    document.getElementById('note').hidden = !state.sample;
+    document.getElementById('today').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  }
+
+  /* ---------- actions ---------- */
+  function applyTypical(el, p) {
+    var pl = plantOf(p);
+    p.ml = pl.ml; p.every = pl.every;
+    fld(el, 'ml').value = p.ml;
+    fld(el, 'every').value = p.every;
+  }
+  function setPlant(el, p, id) {
+    p.plant = id;
+    fld(el, 'plant').value = id;
+    applyTypical(el, p);
+    touch();
+    drawScene(el, p);
+    refreshCard(el, p);
+    refreshSummary();
+  }
+  function waterOne(p, el) {
+    p.last = today();
+    fld(el, 'last').value = p.last;
+    touch();
+    var sc = q(el, 'scene');
+    sc.classList.remove('pouring');
+    void sc.offsetWidth;
+    sc.classList.add('pouring', 'wet');
+    setTimeout(function () { sc.classList.remove('pouring'); }, 1600);
+    setTimeout(function () { sc.classList.remove('wet'); }, 3600);
+    refreshCard(el, p);
+    refreshSummary();
+  }
+  function addPlanter() {
+    var n = state.planters.length + 1;
+    var pl = PLANTS[(n + 2) % PLANTS.length];
+    var p = { id: uid(), name: 'Planter ' + n, plant: pl.id, pot: POTS[state.planters.length % POTS.length].id, ml: pl.ml, every: pl.every, last: today() };
+    state.planters.push(p);
+    touch();
+    render();
+    var input = fld(cardEl(p.id), 'name');
+    try { input.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) { /* ignore */ }
+    input.focus();
+    input.select();
+  }
+  function removePlanter(p) {
+    state.planters = state.planters.filter(function (x) { return x.id !== p.id; });
+    touch();
+    render();
+  }
+  function step(el, p, key, delta) {
+    var lo = key === 'ml' ? ML_MIN : EVERY_MIN, hi = key === 'ml' ? ML_MAX : EVERY_MAX;
+    p[key] = Math.max(lo, Math.min(hi, p[key] + delta));
+    fld(el, key).value = p[key];
+    touch();
+    refreshCard(el, p);
+    refreshSummary();
+  }
+
+  grid.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    var act = btn.dataset.act;
+    if (act === 'add') { addPlanter(); return; }
+    var el = btn.closest('.card');
+    if (!el) return;
+    var p = get(el.dataset.id);
+    if (!p) return;
+    if (act === 'prev' || act === 'next') {
+      var idx = PLANTS.indexOf(plantOf(p));
+      var dir = act === 'next' ? 1 : -1;
+      setPlant(el, p, PLANTS[(idx + dir + PLANTS.length) % PLANTS.length].id);
+    } else if (act === 'pot') {
+      p.pot = btn.dataset.pot;
+      Array.prototype.forEach.call(el.querySelectorAll('.sw'), function (s) { s.setAttribute('aria-pressed', String(s === btn)); });
+      touch();
+      drawScene(el, p);
+    } else if (act === 'ml-dec') { step(el, p, 'ml', -25); }
+    else if (act === 'ml-inc') { step(el, p, 'ml', 25); }
+    else if (act === 'ev-dec') { step(el, p, 'every', -1); }
+    else if (act === 'ev-inc') { step(el, p, 'every', 1); }
+    else if (act === 'water') { waterOne(p, el); }
+    else if (act === 'reset') {
+      applyTypical(el, p); touch(); refreshCard(el, p); refreshSummary();
+    } else if (act === 'remove') {
+      if (btn.dataset.confirm) { removePlanter(p); return; }
+      btn.dataset.confirm = '1';
+      btn.textContent = 'Tap again to remove';
+      setTimeout(function () {
+        if (btn.isConnected) { delete btn.dataset.confirm; btn.textContent = 'Remove'; }
+      }, 3000);
+    }
+  });
+
+  grid.addEventListener('input', function (e) {
+    var t = e.target, f = t.dataset && t.dataset.field;
+    if (!f) return;
+    var el = t.closest('.card'), p = el && get(el.dataset.id);
+    if (!p) return;
+    if (f === 'name') { p.name = t.value; touch(); refreshSummary(); return; }
+    if (f === 'ml' || f === 'every') {
+      var v = parseInt(t.value, 10);
+      if (!(v >= 1)) return;
+      p[f] = Math.min(f === 'ml' ? ML_MAX : EVERY_MAX, v);
+      touch(); refreshCard(el, p); refreshSummary();
+      return;
+    }
+    if (f === 'last' && parse(t.value)) {
+      p.last = t.value > today() ? today() : t.value;
+      touch(); refreshCard(el, p); refreshSummary();
+    }
+  });
+
+  grid.addEventListener('change', function (e) {
+    var t = e.target, f = t.dataset && t.dataset.field;
+    if (!f) return;
+    var el = t.closest('.card'), p = el && get(el.dataset.id);
+    if (!p) return;
+    if (f === 'plant') { setPlant(el, p, t.value); return; }
+    if (f === 'ml') { p.ml = clampInt(t.value, ML_MIN, ML_MAX, p.ml); t.value = p.ml; }
+    if (f === 'every') { p.every = clampInt(t.value, EVERY_MIN, EVERY_MAX, p.every); t.value = p.every; }
+    if (f === 'last') { t.value = p.last; }
+    if (f === 'ml' || f === 'every') { touch(); refreshCard(el, p); refreshSummary(); }
+    if (f === 'name' && !p.name.trim()) { p.name = 'Planter'; t.value = p.name; touch(); refreshSummary(); }
+  });
+
+  document.getElementById('add').addEventListener('click', addPlanter);
+  document.getElementById('water-all').addEventListener('click', function () {
+    state.planters.forEach(function (p) {
+      if (info(p).left <= 0) waterOne(p, cardEl(p.id));
+    });
+  });
+
+  render();
+  setInterval(function () {
+    document.getElementById('today').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+    state.planters.forEach(function (p) { var el = cardEl(p.id); if (el) refreshCard(el, p); });
+    refreshSummary();
+  }, 60000);
+})();
+</script>
+
+</body></html>
